@@ -147,6 +147,36 @@ public final class Main {
         input = input.toLowerCase();
         return input;
     }
+   
+    
+    /*Requires Item_No to be defined uniquely in type Media but not an Album, Track, Movie, or Book
+    */
+    private static void insertAlbum(Connection conn, int itemNo, String albumName, int numSongs, String artistName){
+        try {
+            String query = "INSERT INTO Album (Item_No, Name, Num_Songs, Artist_Name) values (?,?,?,?)";
+            PreparedStatement stmt = conn.preparedStatement(query);
+            stmt.setInt(itemNo);
+            stmt.setString(albumName);
+            stmt.setInt(numSongs);
+            stmt.setInt(artistName);
+            stmt.executeUpdate();
+            System.println("Sucessfully inserted album record.);
+            } catch(SQLException e){
+            System.out.println(e.getMessage());
+            }   
+    }
+                           
+    private static void deleteAlbum(Connection conn, int itemNo){
+        try{
+            String query = "DELETE FROM Album WHERE Item_No = ?";
+            PreparedStatement stmt = conn.preparedStatement(query);
+            stmt.setInt(itemNo);
+            stmt.executeUpdate();
+            System.println("Sucessfully deleted album record.);
+            } catch(SQLException e){
+            System.out.println(e.getMessage());
+            }  
+    }
 
     /**
      * Main method.
