@@ -79,7 +79,7 @@ public final class Main {
         return conn;
     }
 
-    private static Media addRecords(Scanner in, Connection Conn) {
+    private static void addRecords(Scanner in, Connection Conn) {
     	
     	System.out.print("Which media type would you like to add? (A - Album, B - Book, M - Movie): ");
     	String choice = in.next();
