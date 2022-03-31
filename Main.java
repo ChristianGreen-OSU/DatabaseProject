@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -78,19 +79,59 @@ public final class Main {
         return conn;
     }
 
-    private static Media addRecords(Scanner in) {
-        System.out.println("Item Number: ");
-        int itemNo = Integer.parseInt(in.nextLine());
-        System.out.println("Title: ");
-        String title = in.nextLine();
-        System.out.println("Location: ");
-        String location = in.nextLine();
-        System.out.println("Length: ");
-        int length = Integer.parseInt(in.nextLine());
-
-        Media record = new Media(itemNo, title, location, length);
-        System.out.println("New Record Added!");
-        return record;
+    private static Media addRecords(Scanner in, Connection Conn) {
+    	
+    	System.out.print("Which media type would you like to add? (A - Album, B - Book, M - Movie): ");
+    	String choice = in.next();
+    	choice.toLowerCase();
+    	
+    	if (choice == "a" || choice == "album")
+    	{
+    		System.out.print("Enter the item number: ");
+        	int Item_No = in.nextInt();
+        	System.out.print("Enter the Album Name: ");
+        	String Name = in.next();
+        	System.out.print("Enter the number of songs: ");
+        	int Num_Songs = in.nextInt();
+        	System.out.print("Enter the artist name: ");
+        	String Artist_Name = in.next();
+        	
+        	insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
+    	}
+    	else if (choice == "b" || choice == "book")
+    	{
+    		System.out.print("Enter the item number: ");
+        	int Item_No = in.nextInt();
+        	System.out.print("Enter the Book Title: ");
+        	String Title = in.next();
+        	System.out.print("Enter the number of pages: ");
+        	int Length = in.nextInt();
+        	System.out.print("Enter the number of chapters: ");
+        	int Chapters = in.nextInt();
+        	
+        	insertBook(Conn, Item_No, Title, Length, Chapters);
+    	}
+    	else if (choice == "m" || choice == "movie")
+    	{
+    		System.out.print("Enter the item number: ");
+        	int Item_No = in.nextInt();
+        	System.out.print("Enter the Movie Title: ");
+        	String Title = in.next();
+        	System.out.print("Enter the length of the movie in minutes: ");
+        	int Length = in.nextInt();
+        	System.out.print("Enter the Director's Name: ");
+        	String dName = in.next();
+        	System.out.print("Enter the Lead Actor's Name: ");
+        	String aName = in.next();
+        	
+        	insertMovie(Conn, Item_No, Title, Length, dName, aName);
+    	}
+        else
+    	{
+    		System.out.println("Invalid entry - Try again!");
+    	}
+    	
+        
     }
 
     private static void editRecords(Scanner in, Inventory inv) {
@@ -138,8 +179,7 @@ public final class Main {
     }
 
     private static String menu(Scanner in) {
-        System.out.println(
-                "(a) Add new records (movies, audiobooks, albums, ..)");
+        System.out.println("(a) Add new records (movies, audiobooks, albums, ..)");
         System.out.println("(b) Edit records (movies, audiobooks, albums, ..)");
         System.out.println("(c) Search (movies, audiobooks, albums, ..)");
         System.out.println("(x) to Exit Program");
@@ -151,29 +191,83 @@ public final class Main {
     
     /*Requires Item_No to be defined uniquely in type Media but not an Album, Track, Movie, or Book
     */
-    private static void insertAlbum(Connection conn, int itemNo, String albumName, int numSongs, String artistName){
+    private static void insertAlbum(Connection conn, int itemNo, String albumName, int numSongs, String artistName) {
         try {
-            String query = "INSERT INTO Album (Item_No, Name, Num_Songs, Artist_Name) values (?,?,?,?)";
-            PreparedStatement stmt = conn.preparedStatement(query);
-            stmt.setInt(itemNo);
-            stmt.setString(albumName);
-            stmt.setInt(numSongs);
-            stmt.setInt(artistName);
-            stmt.executeUpdate();
-            System.println("Sucessfully inserted album record.);
-            } catch(SQLException e){
+            
+            String queryAlbum = " INSERT into Album (Item_No, Name, Num_Songs, Artist_Name)" + " values (?, ?, ?, ?)";
+        	
+			PreparedStatement stmt = conn.prepareStatement(queryAlbum);
+			
+			stmt.setInt(1,  itemNo);
+			stmt.setString(2, albumName);
+			stmt.setInt(3, numSongs);
+			stmt.setString(4, artistName);
+			
+			stmt.execute();
+			System.out.println("Successful Entry");
+			conn.close();
+        } catch(SQLException e){
             System.out.println(e.getMessage());
+			System.out.println("ERROR when adding to Album");
             }   
+    }
+    
+    private static void insertBook(Connection conn, int Item_No, String Title, int Length, int Chapters) {
+    	try {
+        	String queryBook = " INSERT into Book (Item_No, Title, Length, Chapters)" + " values (?, ?, ?, ?)";
+        	
+			PreparedStatement prepStmt = conn.prepareStatement(queryBook);
+			
+			prepStmt.setInt(1,  Item_No);
+			prepStmt.setString(2,  Title);
+			prepStmt.setInt(3, Length);
+			prepStmt.setInt(4, Chapters);
+			
+			prepStmt.execute();
+			System.out.println("Successful Entry");
+			conn.close();
+		
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("ERROR when adding to Book");
+		}
+    }
+    
+    private static void insertMovie(Connection conn, int Item_No, String Title, int Length, String dName, String aName) {
+    	try {
+        	String queryMovie = " INSERT into Movie (Item_No, Title, Length, Director_Name, Actor_Name)" + " values (?, ?, ?, ?, ?)";
+        	
+			PreparedStatement prepStmt = conn.prepareStatement(queryMovie);
+			
+			prepStmt.setInt(1,  Item_No);
+			prepStmt.setString(2,  Title);
+			prepStmt.setInt(3, Length);
+			prepStmt.setString(4, dName);
+			prepStmt.setString(5,  aName);
+			
+			prepStmt.execute();
+			System.out.println("Successful Entry");
+			conn.close();
+		
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("ERROR when adding to Book");
+		}
     }
                            
     private static void deleteAlbum(Connection conn, int itemNo){
         try{
             String query = "DELETE FROM Album WHERE Item_No = ?";
-            PreparedStatement stmt = conn.preparedStatement(query);
-            stmt.setInt(itemNo);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemNo);
             stmt.executeUpdate();
-            System.println("Sucessfully deleted album record.);
-            } catch(SQLException e){
+            System.out.println("Sucessfully deleted album record.");
+         
+        } catch(SQLException e){
             System.out.println(e.getMessage());
             }  
     }
