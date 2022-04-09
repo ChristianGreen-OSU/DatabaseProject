@@ -68,7 +68,7 @@ public final class Main {
                 System.out.println("Null Connection");
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
             System.out
                     .println("There was a problem connecting to the database.");
         }
@@ -80,42 +80,42 @@ public final class Main {
 
         System.out.println(
                 "Which media type would you like to add? (A - Album, B - Book, M - Movie): ");
-        String choice = in.next();
+        String choice = in.nextLine();
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Album Name: ");
-            String Name = in.next();
+            String Name = in.nextLine();
             System.out.println("Enter the number of songs: ");
-            int Num_Songs = in.nextInt();
+            int Num_Songs = Integer.parseInt(in.nextLine());
             System.out.println("Enter the artist name: ");
-            String Artist_Name = in.next();
+            String Artist_Name = in.nextLine();
 
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
         } else if (choice.equals("b") || choice.equals("book")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Book Title: ");
-            String Title = in.next();
+            String Title = in.nextLine();
             System.out.println("Enter the number of pages: ");
-            int Length = in.nextInt();
+            int Length = Integer.parseInt(in.nextLine());
             System.out.println("Enter the number of chapters: ");
-            int Chapters = in.nextInt();
+            int Chapters = Integer.parseInt(in.nextLine());
 
             insertBook(Conn, Item_No, Title, Length, Chapters);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Movie Title: ");
-            String Title = in.next();
+            String Title = in.nextLine();
             System.out.println("Enter the length of the movie in minutes: ");
-            int Length = in.nextInt();
+            int Length = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Director's Name: ");
-            String dName = in.next();
+            String dName = in.nextLine();
             System.out.println("Enter the Lead Actor's Name: ");
-            String aName = in.next();
+            String aName = in.nextLine();
 
             insertMovie(Conn, Item_No, Title, Length, dName, aName);
         } else {
@@ -129,21 +129,21 @@ public final class Main {
 
         System.out.println(
                 "Which media type would you like to delete? (A - Album, B - Book, M - Movie): ");
-        String choice = in.next();
+        String choice = in.nextLine();
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
             deleteAlbum(Conn, Item_No);
         } else if (choice.equals("b") || choice.equals("book")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
 
             deleteBook(Conn, Item_No);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
 
             deleteMovie(Conn, Item_No);
         } else {
@@ -157,21 +157,21 @@ public final class Main {
 
         System.out.println(
                 "Which media type would you like to search? (A - Album, B - Book, M - Movie): ");
-        String choice = in.next();
+        String choice = in.nextLine();
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
             searchAlbum(Conn, Item_No);
         } else if (choice.equals("b") || choice.equals("book")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
 
             searchBook(Conn, Item_No);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the item number: ");
-            int Item_No = in.nextInt();
+            int Item_No = Integer.parseInt(in.nextLine());
 
             searchMovie(Conn, Item_No);
         } else {
@@ -185,28 +185,28 @@ public final class Main {
 
         System.out.println(
                 "Which media type would you like to order? (A - Album, B - Book, M - Movie): ");
-        String choice = in.next();
+        String choice = in.nextLine();
         choice = choice.toLowerCase();
         int quantity = 0;
         System.out.println();
 
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the Album Name: ");
-            String Name = in.next();
+            String Name = in.nextLine();
             System.out.println("Enter the artist name: ");
-            String Artist_Name = in.next();
+            String Artist_Name = in.nextLine();
 
             orderAlbum(Conn, Name, Artist_Name);
         } else if (choice.equals("b") || choice.equals("book")) {
             System.out.println("Enter the Book Title: ");
-            String Title = in.next();
+            String Title = in.nextLine();
             System.out.println("Enter the author name: ");
-            String Artist_Name = in.next();
+            String Artist_Name = in.nextLine();
 
             orderBook(Conn, Title);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the Movie Title: ");
-            String Title = in.next();
+            String Title = in.nextLine();
 
             orderMovie(Conn, Title);
         } else {
@@ -296,9 +296,8 @@ public final class Main {
 
             stmt.execute();
             System.out.println("Successful Entry");
-            conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
             System.out.println("ERROR when adding to Album");
         } finally {
             if (stmt != null) {
@@ -327,7 +326,6 @@ public final class Main {
 
             stmt.execute();
             System.out.println("Successful Entry");
-            conn.close();
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -349,7 +347,6 @@ public final class Main {
         try {
             String queryMovie = " INSERT into Movie (Item_No, Title, Length, Director_Name, Actor_Name)"
                     + " values (?, ?, ?, ?, ?)";
-
             stmt = conn.prepareStatement(queryMovie);
 
             stmt.setInt(1, Item_No);
@@ -360,7 +357,6 @@ public final class Main {
 
             stmt.execute();
             System.out.println("Successful Entry");
-            conn.close();
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -387,7 +383,7 @@ public final class Main {
             System.out.println("Sucessfully deleted album record.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -409,7 +405,7 @@ public final class Main {
             System.out.println("Sucessfully deleted book record.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -431,7 +427,7 @@ public final class Main {
             System.out.println("Sucessfully deleted movie record.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -453,7 +449,7 @@ public final class Main {
             System.out.println("Sucessfully searched album records.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -475,7 +471,7 @@ public final class Main {
             System.out.println("Sucessfully searched book records.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -497,7 +493,7 @@ public final class Main {
             System.out.println("Sucessfully searched movie records.");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            printSQLException(e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -525,6 +521,50 @@ public final class Main {
         // TODO Need to add functionality to this. Currently don't have a table
         //for it
 
+    }
+
+    //copied from JDBC oracle documentation
+    public static void printSQLException(SQLException ex) {
+
+        for (Throwable e : ex) {
+            if (e instanceof SQLException) {
+                if (ignoreSQLException(
+                        ((SQLException) e).getSQLState()) == false) {
+
+                    e.printStackTrace(System.err);
+                    System.err.println(
+                            "SQLState: " + ((SQLException) e).getSQLState());
+
+                    System.err.println(
+                            "Error Code: " + ((SQLException) e).getErrorCode());
+
+                    System.err.println("Message: " + e.getMessage());
+
+                    Throwable t = ex.getCause();
+                    while (t != null) {
+                        System.out.println("Cause: " + t);
+                        t = t.getCause();
+                    }
+                }
+            }
+        }
+    }
+
+    //copied from JDBC oracle documentation
+    public static boolean ignoreSQLException(String sqlState) {
+        if (sqlState == null) {
+            System.out.println("The SQL state is not defined!");
+            return false;
+        }
+        // X0Y32: Jar file already exists in schema
+        if (sqlState.equalsIgnoreCase("X0Y32")) {
+            return true;
+        }
+        // 42Y55: Table already exists in schema
+        if (sqlState.equalsIgnoreCase("42Y55")) {
+            return true;
+        }
+        return false;
     }
 
     /**
