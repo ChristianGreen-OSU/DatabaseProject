@@ -19,7 +19,7 @@ public final class Main {
      * only provide the name and extension.
      */
     private static String DATABASE = "Library.db";
-    private static int Max_Item_No = MaxItemNo;
+    
 
     /**
      * The query statements to be executed.
@@ -75,6 +75,8 @@ public final class Main {
         }
         return conn;
     }
+    
+    private static int Max_Item_No = MaxItemNo(conn);
 
     private static void addRecords(Scanner in, Connection Conn)
             throws SQLException {
