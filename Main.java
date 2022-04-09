@@ -19,6 +19,7 @@ public final class Main {
      * only provide the name and extension.
      */
     private static String DATABASE = "Library.db";
+    private static int Max_Item_No = MaxItemNo;
 
     /**
      * The query statements to be executed.
@@ -84,30 +85,66 @@ public final class Main {
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
+            //System.out.println("Enter the item number: ");
+            //int Item_No = Integer.parseInt(in.nextLine());
+            int Item_No = maxItemNo + 1;
+            maxItemNo++;
             System.out.println("Enter the Album Name: ");
             String Name = in.nextLine();
             System.out.println("Enter the number of songs: ");
             int Num_Songs = Integer.parseInt(in.nextLine());
             System.out.println("Enter the artist name: ");
             String Artist_Name = in.nextLine();
+            System.out.println("Enter the year: ");
+            int year = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the genre: ");
+            String genre = in.nextLine();
+            System.out.println("Enter the location: ");
+            String location = in.nextLine();
+            System.out.println("Enter the type: ");
+            String type = in.nextLine();
+            System.out.println("Enter the number of copies: );
+            int numCopies = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the price: );
+            int price = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the number of copies checked out: );
+            int numCopiesChecked = Integer.parseInt(in.nextLine());
 
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
         } else if (choice.equals("b") || choice.equals("book")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
+            //System.out.println("Enter the item number: ");
+            //int Item_No = Integer.parseInt(in.nextLine());
+            int Item_No = maxItemNo + 1;
+            maxItemNo++;
             System.out.println("Enter the Book Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the number of pages: ");
             int Length = Integer.parseInt(in.nextLine());
             System.out.println("Enter the number of chapters: ");
             int Chapters = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the year: ");
+            int year = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the genre: ");
+            String genre = in.nextLine();
+            System.out.println("Enter the location: ");
+            String location = in.nextLine();
+            System.out.println("Enter the type: ");
+            String type = in.nextLine();
+            System.out.println("Enter the number of copies: );
+            int numCopies = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the price: );
+            int price = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the number of copies checked out: );
+            int numCopiesChecked = Integer.parseInt(in.nextLine());
 
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);
             insertBook(Conn, Item_No, Title, Length, Chapters);
         } else if (choice.equals("m") || choice.equals("movie")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
+            //System.out.println("Enter the item number: ");
+            //int Item_No = Integer.parseInt(in.nextLine());
+            int Item_No = maxItemNo + 1;
+            maxItemNo++;
             System.out.println("Enter the Movie Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the length of the movie in minutes: ");
@@ -116,7 +153,22 @@ public final class Main {
             String dName = in.nextLine();
             System.out.println("Enter the Lead Actor's Name: ");
             String aName = in.nextLine();
+            System.out.println("Enter the year: ");
+            int year = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the genre: ");
+            String genre = in.nextLine();
+            System.out.println("Enter the location: ");
+            String location = in.nextLine();
+            System.out.println("Enter the type: ");
+            String type = in.nextLine();
+            System.out.println("Enter the number of copies: );
+            int numCopies = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the price: );
+            int price = Integer.parseInt(in.nextLine());
+            System.out.println("Enter the number of copies checked out: );
+            int numCopiesChecked = Integer.parseInt(in.nextLine());
 
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);       
             insertMovie(Conn, Item_No, Title, Length, dName, aName);
         } else {
             System.out.println("Invalid entry - Try again!");
@@ -131,6 +183,15 @@ public final class Main {
                 "Which media type would you like to delete? (A - Album, B - Book, M - Movie): ");
         String choice = in.nextLine();
         choice = choice.toLowerCase();
+
+
+        if (choice.equals("a") || choice.equals("album")) {
+            System.out.println("Enter the item number: ");
+            int Item_No = Integer.parseInt(in.nextLine());
+            deleteAlbum(Conn, Item_No);
+        } else if (choice.equals("b") || choice.equals("book")) {
+            System.out.println("Enter the item number: ");
+            int Item_No = Integer.parseInt(in.nextLine());
 
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the item number: ");
@@ -372,6 +433,38 @@ public final class Main {
         }
     }
 
+    private static void insertMedia(Connection conn, int item_No, int year, String genre, String location, String type, int numCopies, 
+                                    int price, int numChecked) throws SQLException {
+        PreparedStatment stmt = null;
+        try {
+            String queryMedia = " INSERT into Media(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)";
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)"
+            stmt = conn.prepareStatement(queryMedia);
+            
+            stmt.setInt(1, item_No);
+            stmt.setInt(2, year);
+            stmt.setString(3, genre);
+            stmt.setString(4, location);
+            stmt.setString(5, type);
+            stmt.setInt(6, numCopies);
+            stmt.setInt(7, price);
+            stmt.setInt(8, numChecked);
+            
+            stmt.execute();
+            } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Media");
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+    
     private static void deleteAlbum(Connection conn, int itemNo)
             throws SQLException {
         PreparedStatement stmt = null;
@@ -480,6 +573,20 @@ public final class Main {
                 conn.close();
             }
         }
+    }
+    
+    private static int maxItemNo(Connection conn) throws SQL Exception
+    {
+            PreparedStatement stmt = null;
+        try {
+            String query = "SELECT Max(Item_No) FROM Media
+            stmt = conn.prepareStatement(query);
+            ResultSet item = stmt.executeUpdate();
+            int item_No = item.getInt(0);
+        } catch (SQLException e) {
+            printSQLException(e);   
+        }
+        return item_No;
     }
 
     private static void searchMovie(Connection conn, int itemNo)
