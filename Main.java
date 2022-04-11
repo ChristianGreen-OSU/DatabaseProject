@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -19,7 +20,6 @@ public final class Main {
      * only provide the name and extension.
      */
     private static String DATABASE = "Library.db";
-    
 
     /**
      * The query statements to be executed.
@@ -75,22 +75,20 @@ public final class Main {
         }
         return conn;
     }
-    
-    private static int Max_Item_No = MaxItemNo(conn);
 
-    private static void addRecords(Scanner in, Connection Conn)
+    private static void addRecords(Scanner in, Connection Conn, int Max_Item_No)
             throws SQLException {
 
         System.out.println(
                 "Which media type would you like to add? (A - Album, B - Book, M - Movie): ");
         String choice = in.nextLine();
         choice = choice.toLowerCase();
+        Max_Item_No++;
+        int Item_No = Max_Item_No;
 
         if (choice.equals("a") || choice.equals("album")) {
             //System.out.println("Enter the item number: ");
             //int Item_No = Integer.parseInt(in.nextLine());
-            int Item_No = maxItemNo + 1;
-            maxItemNo++;
             System.out.println("Enter the Album Name: ");
             String Name = in.nextLine();
             System.out.println("Enter the number of songs: ");
@@ -103,22 +101,21 @@ public final class Main {
             String genre = in.nextLine();
             System.out.println("Enter the location: ");
             String location = in.nextLine();
-            System.out.println("Enter the type: ");
+            System.out.println("Enter the type (digital/physical): ");
             String type = in.nextLine();
-            System.out.println("Enter the number of copies: );
+            System.out.println("Enter the number of copies: ");
             int numCopies = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the price: );
+            System.out.println("Enter the price: ");
             int price = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the number of copies checked out: );
+            System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
-            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
+                    price, numCopiesChecked);
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
         } else if (choice.equals("b") || choice.equals("book")) {
             //System.out.println("Enter the item number: ");
             //int Item_No = Integer.parseInt(in.nextLine());
-            int Item_No = maxItemNo + 1;
-            maxItemNo++;
             System.out.println("Enter the Book Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the number of pages: ");
@@ -131,22 +128,21 @@ public final class Main {
             String genre = in.nextLine();
             System.out.println("Enter the location: ");
             String location = in.nextLine();
-            System.out.println("Enter the type: ");
+            System.out.println("Enter the type (digital/physical): ");
             String type = in.nextLine();
-            System.out.println("Enter the number of copies: );
+            System.out.println("Enter the number of copies: ");
             int numCopies = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the price: );
+            System.out.println("Enter the price: ");
             int price = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the number of copies checked out: );
+            System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
-            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
+                    price, numCopiesChecked);
             insertBook(Conn, Item_No, Title, Length, Chapters);
         } else if (choice.equals("m") || choice.equals("movie")) {
             //System.out.println("Enter the item number: ");
             //int Item_No = Integer.parseInt(in.nextLine());
-            int Item_No = maxItemNo + 1;
-            maxItemNo++;
             System.out.println("Enter the Movie Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the length of the movie in minutes: ");
@@ -161,16 +157,17 @@ public final class Main {
             String genre = in.nextLine();
             System.out.println("Enter the location: ");
             String location = in.nextLine();
-            System.out.println("Enter the type: ");
+            System.out.println("Enter the type (digital/physical): ");
             String type = in.nextLine();
-            System.out.println("Enter the number of copies: );
+            System.out.println("Enter the number of copies: ");
             int numCopies = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the price: );
+            System.out.println("Enter the price: ");
             int price = Integer.parseInt(in.nextLine());
-            System.out.println("Enter the number of copies checked out: );
+            System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
-            insertMedia(Conn, Item_No, year, genre, location, type, numCopies, price, numCopiesChecked);       
+            insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
+                    price, numCopiesChecked);
             insertMovie(Conn, Item_No, Title, Length, dName, aName);
         } else {
             System.out.println("Invalid entry - Try again!");
@@ -186,7 +183,6 @@ public final class Main {
         String choice = in.nextLine();
         choice = choice.toLowerCase();
 
-
         if (choice.equals("a") || choice.equals("album")) {
             System.out.println("Enter the item number: ");
             int Item_No = Integer.parseInt(in.nextLine());
@@ -194,15 +190,6 @@ public final class Main {
         } else if (choice.equals("b") || choice.equals("book")) {
             System.out.println("Enter the item number: ");
             int Item_No = Integer.parseInt(in.nextLine());
-
-        if (choice.equals("a") || choice.equals("album")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-            deleteAlbum(Conn, Item_No);
-        } else if (choice.equals("b") || choice.equals("book")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-
             deleteBook(Conn, Item_No);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the item number: ");
@@ -264,9 +251,9 @@ public final class Main {
             System.out.println("Enter the Book Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the author name: ");
-            String Artist_Name = in.nextLine();
+            String Author_Name = in.nextLine();
 
-            orderBook(Conn, Title);
+            orderBook(Conn, Title, Author_Name);
         } else if (choice.equals("m") || choice.equals("movie")) {
             System.out.println("Enter the Movie Title: ");
             String Title = in.nextLine();
@@ -435,14 +422,15 @@ public final class Main {
         }
     }
 
-    private static void insertMedia(Connection conn, int item_No, int year, String genre, String location, String type, int numCopies, 
-                                    int price, int numChecked) throws SQLException {
-        PreparedStatment stmt = null;
+    private static void insertMedia(Connection conn, int item_No, int year,
+            String genre, String location, String type, int numCopies,
+            int price, int numChecked) throws SQLException {
+        PreparedStatement stmt = null;
         try {
-            String queryMedia = " INSERT into Media(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)";
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?)"
+            String queryMedia = " INSERT into Media(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)"; //Pretty sure not supposed to concatenate
             stmt = conn.prepareStatement(queryMedia);
-            
+
             stmt.setInt(1, item_No);
             stmt.setInt(2, year);
             stmt.setString(3, genre);
@@ -451,9 +439,9 @@ public final class Main {
             stmt.setInt(6, numCopies);
             stmt.setInt(7, price);
             stmt.setInt(8, numChecked);
-            
+
             stmt.execute();
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Media");
@@ -466,7 +454,7 @@ public final class Main {
             }
         }
     }
-    
+
     private static void deleteAlbum(Connection conn, int itemNo)
             throws SQLException {
         PreparedStatement stmt = null;
@@ -576,18 +564,20 @@ public final class Main {
             }
         }
     }
-    
-    private static int maxItemNo(Connection conn) throws SQL Exception
-    {
-            PreparedStatement stmt = null;
+
+    private static int maxItemNo(Connection conn) {
+        PreparedStatement stmt = null;
+        ResultSet item = null;
+        int item_No = 0;
         try {
-            String query = "SELECT Max(Item_No) FROM Media
+            String query = "SELECT Max(Item_No) FROM Media";
             stmt = conn.prepareStatement(query);
-            ResultSet item = stmt.executeUpdate();
-            int item_No = item.getInt(0);
+            item = stmt.executeQuery();
+            item_No = item.getInt(1);
         } catch (SQLException e) {
-            printSQLException(e);   
+            printSQLException(e);
         }
+        System.out.println(item_No);
         return item_No;
     }
 
@@ -619,7 +609,8 @@ public final class Main {
 
     }
 
-    private static void orderBook(Connection conn, String title) {
+    private static void orderBook(Connection conn, String title,
+            String Author_Name) {
         // TODO Need to add functionality to this. Currently don't have a table
         //for it
 
@@ -687,10 +678,11 @@ public final class Main {
         Connection conn = initializeDB(DATABASE);
         Scanner in = new Scanner(System.in);
         String input = menu(in);
+        int Max_Item_No = maxItemNo(conn);
 
         while (!input.equals("x")) {
             if (input.equals("a")) { //add new record
-                addRecords(in, conn);
+                addRecords(in, conn, Max_Item_No);
             } else if (input.equals("b")) { //delete record
                 deleteRecords(in, conn);
             } else if (input.equals("c")) { //Search for record
