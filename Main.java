@@ -166,9 +166,19 @@ public final class Main {
             System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
+             System.out.println("Enter the authors name: ");
+            String name = in.nextLine();
+            boolean exists = checkAuthor(Conn, name);
+            if(!exists) {
+            	insertAuthor(Conn, name, genre);
+            }
+            
+            
             insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
                     price, numCopiesChecked);
-            insertMovie(Conn, Item_No, Title, Length, dName, aName);
+            insertBook(Conn, Item_No, Title, Length, Chapters);
+            insertWrites(Conn, name, Item_No);
+            
         } else {
             System.out.println("Invalid entry - Try again!");
         }
@@ -454,6 +464,49 @@ public final class Main {
             }
         }
     }
+    
+     private static void insertAuthor(Connection conn, String name, String genre) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryAuthor = " INSERT into Author(Name, Genre)"
+                    + " values (?, ?)"; //Pretty sure not supposed to concatenate
+            stmt = conn.prepareStatement(queryAuthor);
+
+            stmt.setString(1, name);
+            stmt.setString(2, genre);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Author");
+        }
+    }
+    
+    private static void insertWrites(Connection conn, String author, int itemNo) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryWrites = " INSERT into Writes(Name, Item_No)"
+                    + " values (?, ?)"; //Pretty sure not supposed to concatenate
+            stmt = conn.prepareStatement(queryWrites);
+
+            stmt.setString(1, author);
+            stmt.setInt(2, itemNo);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Author");
+        }  finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
 
     private static void deleteAlbum(Connection conn, int itemNo)
             throws SQLException {
@@ -601,6 +654,34 @@ public final class Main {
                 conn.close();
             }
         }
+    }
+    
+        //Checks if authorName is already and author in the database
+    private static boolean checkAuthor(Connection conn, 
+    		String authorName) throws SQLException{
+    	
+    	PreparedStatement stmt = null;
+    	boolean exists = false;
+    	try {
+    		String query = "SELECT Count(*) FROM Author WHERE Name = ?";
+    		stmt = conn.prepareStatement(query);
+    		stmt.setString(1, authorName);
+    		ResultSet set = stmt.executeQuery();
+    		int number = set.getInt(1);
+    		
+    		if(number == 0) {
+    			return exists;
+    		}
+    		else {
+    			exists = true;
+    		}
+    		
+    	}
+    	catch (SQLException e) {
+    		printSQLException(e);
+    	
+    }
+    	return exists;
     }
 
     private static void orderMovie(Connection conn, String title) {
