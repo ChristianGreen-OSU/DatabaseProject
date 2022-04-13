@@ -13,6 +13,10 @@ import java.util.Scanner;
  */
 public final class Main {
 
+    //TODO: Insert tracks? Maybe a fake "upload a list of all tracks and we'll parse it" method
+    //TODO: Search by library card number, actor/director/artist/author name
+    //TODO: Order functionality
+
     /**
      * The database file name.
      *
@@ -110,6 +114,17 @@ public final class Main {
             System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
+            if (!checkArtist(Conn, Artist_Name)) {
+                System.out.println("Is the artist still active? (Y/N)");
+                String active = in.nextLine();
+                boolean activeStatus = false;
+                if (active.equals("Y")) {
+                    activeStatus = true;
+                }
+                insertArtist(Conn, Artist_Name, activeStatus);
+            }
+            //TODO: Do we have a way of adding Tracks?
+
             insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
                     price, numCopiesChecked);
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
@@ -136,6 +151,12 @@ public final class Main {
             int price = Integer.parseInt(in.nextLine());
             System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
+
+            System.out.println("Enter the authors name: ");
+            String name = in.nextLine();
+            if (!checkAuthor(Conn, name)) {
+                insertAuthor(Conn, name, genre);
+            }
 
             insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
                     price, numCopiesChecked);
@@ -166,19 +187,20 @@ public final class Main {
             System.out.println("Enter the number of copies checked out: ");
             int numCopiesChecked = Integer.parseInt(in.nextLine());
 
-             System.out.println("Enter the authors name: ");
-            String name = in.nextLine();
-            boolean exists = checkAuthor(Conn, name);
-            if(!exists) {
-            	insertAuthor(Conn, name, genre);
+            if (!checkDirector(Conn, dName)) {
+                insertDirector(Conn, dName, genre);
             }
-            
-            
+
+            if (!checkActor(Conn, aName)) {
+                System.out.println("Lead Actor's Birthdate (1/1/1990)");
+                String bdate = in.nextLine();
+                insertActor(Conn, aName, bdate);
+            }
+
             insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
                     price, numCopiesChecked);
-            insertBook(Conn, Item_No, Title, Length, Chapters);
-            insertWrites(Conn, name, Item_No);
-            
+            insertMovie(Conn, Item_No, Title, Length, dName, aName);
+
         } else {
             System.out.println("Invalid entry - Try again!");
         }
@@ -194,18 +216,17 @@ public final class Main {
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-            deleteAlbum(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            deleteAlbum(Conn, name);
         } else if (choice.equals("b") || choice.equals("book")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-            deleteBook(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            deleteBook(Conn, name);
         } else if (choice.equals("m") || choice.equals("movie")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-
-            deleteMovie(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            deleteMovie(Conn, name);
         } else {
             System.out.println("Invalid entry - Try again!");
         }
@@ -221,19 +242,17 @@ public final class Main {
         choice = choice.toLowerCase();
 
         if (choice.equals("a") || choice.equals("album")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-            searchAlbum(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            searchAlbum(Conn, name);
         } else if (choice.equals("b") || choice.equals("book")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-
-            searchBook(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            searchBook(Conn, name);
         } else if (choice.equals("m") || choice.equals("movie")) {
-            System.out.println("Enter the item number: ");
-            int Item_No = Integer.parseInt(in.nextLine());
-
-            searchMovie(Conn, Item_No);
+            System.out.println("Enter the name: ");
+            String name = in.nextLine();
+            searchMovie(Conn, name);
         } else {
             System.out.println("Invalid entry - Try again!");
         }
@@ -363,9 +382,6 @@ public final class Main {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
-            }
         }
 
     }
@@ -374,7 +390,7 @@ public final class Main {
             int Length, int Chapters) throws SQLException {
         PreparedStatement stmt = null;
         try {
-            String queryBook = " INSERT into Book (Item_No, Title, Length, Chapters)"
+            String queryBook = " INSERT into Audiobook (Item_No, Title, Length, Chapters)"
                     + " values (?, ?, ?, ?)";
 
             stmt = conn.prepareStatement(queryBook);
@@ -390,13 +406,10 @@ public final class Main {
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            System.out.println("ERROR when adding to Book");
+            System.out.println("ERROR when adding to AudioBook");
         } finally {
             if (stmt != null) {
                 stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
     }
@@ -425,9 +438,6 @@ public final class Main {
         } finally {
             if (stmt != null) {
                 stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
     }
@@ -459,17 +469,15 @@ public final class Main {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
-    
-     private static void insertAuthor(Connection conn, String name, String genre) throws SQLException {
+
+    private static void insertAuthor(Connection conn, String name, String genre)
+            throws SQLException {
         PreparedStatement stmt = null;
         try {
             String queryAuthor = " INSERT into Author(Name, Genre)"
-                    + " values (?, ?)"; //Pretty sure not supposed to concatenate
+                    + " values (?, ?)";
             stmt = conn.prepareStatement(queryAuthor);
 
             stmt.setString(1, name);
@@ -482,8 +490,66 @@ public final class Main {
             System.out.println("ERROR when adding to Author");
         }
     }
-    
-    private static void insertWrites(Connection conn, String author, int itemNo) throws SQLException {
+
+    private static void insertDirector(Connection conn, String name,
+            String genre) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryDirector = " INSERT into Director(Director_Name, Genre)"
+                    + " values (?, ?)";
+            stmt = conn.prepareStatement(queryDirector);
+
+            stmt.setString(1, name);
+            stmt.setString(2, genre);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Director");
+        }
+    }
+
+    private static void insertActor(Connection conn, String name,
+            String birthDate) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryActor = " INSERT into Actor(Actor_Name, Birth_Date)"
+                    + " values (?, ?)";
+            stmt = conn.prepareStatement(queryActor);
+
+            stmt.setString(1, name);
+            stmt.setString(2, birthDate);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Actor");
+        }
+    }
+
+    private static void insertArtist(Connection conn, String name,
+            boolean activeStatus) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryArtist = " INSERT into Artist(Artist_Name, Active_Status)"
+                    + " values (?, ?)";
+            stmt = conn.prepareStatement(queryArtist);
+
+            stmt.setString(1, name);
+            stmt.setBoolean(2, activeStatus);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("ERROR when adding to Artist");
+        }
+    }
+
+    private static void insertWrites(Connection conn, String author, int itemNo)
+            throws SQLException {
         PreparedStatement stmt = null;
         try {
             String queryWrites = " INSERT into Writes(Name, Item_No)"
@@ -498,23 +564,20 @@ public final class Main {
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Author");
-        }  finally {
+        } finally {
             if (stmt != null) {
                 stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
     }
 
-    private static void deleteAlbum(Connection conn, int itemNo)
+    private static void deleteAlbum(Connection conn, String Name)
             throws SQLException {
         PreparedStatement stmt = null;
         try {
-            String query = "DELETE FROM Album WHERE Item_No = ?";
+            String query = "DELETE FROM Album WHERE Name LIKE ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
+            stmt.setString(1, Name);
             stmt.executeUpdate();
             System.out.println("Sucessfully deleted album record.");
 
@@ -524,19 +587,16 @@ public final class Main {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
-    private static void deleteBook(Connection conn, int itemNo)
+    private static void deleteBook(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
         try {
-            String query = "DELETE FROM Book WHERE Item_No = ?";
+            String query = "DELETE FROM Audiobook WHERE Title LIKE ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
+            stmt.setString(1, name);
             stmt.executeUpdate();
             System.out.println("Sucessfully deleted book record.");
 
@@ -546,19 +606,16 @@ public final class Main {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
-    private static void deleteMovie(Connection conn, int itemNo)
+    private static void deleteMovie(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
         try {
-            String query = "DELETE FROM Book WHERE Item_No = ?";
+            String query = "DELETE FROM Movie WHERE Title LIKE ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
+            stmt.setString(1, name);
             stmt.executeUpdate();
             System.out.println("Sucessfully deleted movie record.");
 
@@ -568,52 +625,102 @@ public final class Main {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
-    private static void searchAlbum(Connection conn, int itemNo)
+    private static void searchAlbum(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
+        ResultSet rSet = null;
         try {
-            String query = "SELECT * FROM Album WHERE Item_No = ?";
+            String query = "SELECT * FROM Album WHERE Name LIKE ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
-            stmt.executeUpdate();
-            System.out.println("Sucessfully searched album records.");
+            stmt.setString(1, name);
+            rSet = stmt.executeQuery();
+            while (rSet.next()) {
+                String Title = rSet.getString("Name");
+                int Length = rSet.getInt("Album_Length");
+                int numSongs = rSet.getInt("Num_Songs");
+                String ArtistName = rSet.getString("Artist_Name");
+                System.out.println("Name: " + Title);
+                System.out.println("Length: " + Length);
+                System.out.println("Number of Songs: " + numSongs);
+                System.out.println("Artist Name: " + ArtistName);
+            }
+            System.out.println("Sucessfully searched Album record.");
 
         } catch (SQLException e) {
             printSQLException(e);
         } finally {
+            if (rSet != null) {
+                rSet.close();
+            }
             if (stmt != null) {
                 stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
     }
 
-    private static void searchBook(Connection conn, int itemNo)
+    private static void searchBook(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
+        ResultSet rSet = null;
         try {
-            String query = "SELECT * FROM Book WHERE Item_No = ?";
+            String query = "SELECT * FROM Audiobook WHERE Title LIKE ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
-            stmt.executeUpdate();
-            System.out.println("Sucessfully searched book records.");
+            stmt.setString(1, name);
+            rSet = stmt.executeQuery();
+            while (rSet.next()) {
+                String Title = rSet.getString("Title");
+                int Length = rSet.getInt("Length");
+                int Chapters = rSet.getInt("Chapters");
+                System.out.println("Name: " + Title);
+                System.out.println("Length: " + Length);
+                System.out.println("Chapters: " + Chapters);
+            }
+            System.out.println("Sucessfully searched book record.");
 
         } catch (SQLException e) {
             printSQLException(e);
         } finally {
+            if (rSet != null) {
+                rSet.close();
+            }
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
+        }
+    }
+
+    private static void searchMovie(Connection conn, String name)
+            throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rSet = null;
+        try {
+            String query = "SELECT * FROM Movie WHERE Title LIKE ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, name);
+            rSet = stmt.executeQuery();
+            while (rSet.next()) {
+                String Title = rSet.getString("Title");
+                int Length = rSet.getInt("Length");
+                String DirectorName = rSet.getString("Director_Name");
+                String ActorName = rSet.getString("Actor_Name");
+                System.out.println("Name: " + Title);
+                System.out.println("Length: " + Length);
+                System.out.println("Director: " + DirectorName);
+                System.out.println("Actor: " + ActorName);
+            }
+            System.out.println("Sucessfully searched Movie record.");
+
+        } catch (SQLException e) {
+            printSQLException(e);
+        } finally {
+            if (rSet != null) {
+                rSet.close();
+            }
+            if (stmt != null) {
+                stmt.close();
             }
         }
     }
@@ -634,54 +741,100 @@ public final class Main {
         return item_No;
     }
 
-    private static void searchMovie(Connection conn, int itemNo)
+    //Checks if authorName is already and author in the database
+    private static boolean checkAuthor(Connection conn, String authorName)
             throws SQLException {
+
         PreparedStatement stmt = null;
+        boolean exists = false;
         try {
-            String query = "SELECT * FROM Movie WHERE Item_No = ?";
+            String query = "SELECT Count(*) FROM Author WHERE Name = ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemNo);
-            stmt.executeUpdate();
-            System.out.println("Sucessfully searched movie records.");
+            stmt.setString(1, authorName);
+            ResultSet set = stmt.executeQuery();
+            int number = set.getInt(1);
+
+            if (!(number == 0)) {
+                exists = true;
+            }
 
         } catch (SQLException e) {
             printSQLException(e);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
+
         }
+        return exists;
     }
-    
-        //Checks if authorName is already and author in the database
-    private static boolean checkAuthor(Connection conn, 
-    		String authorName) throws SQLException{
-    	
-    	PreparedStatement stmt = null;
-    	boolean exists = false;
-    	try {
-    		String query = "SELECT Count(*) FROM Author WHERE Name = ?";
-    		stmt = conn.prepareStatement(query);
-    		stmt.setString(1, authorName);
-    		ResultSet set = stmt.executeQuery();
-    		int number = set.getInt(1);
-    		
-    		if(number == 0) {
-    			return exists;
-    		}
-    		else {
-    			exists = true;
-    		}
-    		
-    	}
-    	catch (SQLException e) {
-    		printSQLException(e);
-    	
+
+    //Checks if directorName is already and author in the database
+    private static boolean checkDirector(Connection conn, String directorName)
+            throws SQLException {
+
+        PreparedStatement stmt = null;
+        boolean exists = false;
+        try {
+            String query = "SELECT Count(*) FROM Director WHERE Director_Name = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, directorName);
+            ResultSet set = stmt.executeQuery();
+            int number = set.getInt(1);
+
+            if (!(number == 0)) {
+                exists = true;
+            }
+
+        } catch (SQLException e) {
+            printSQLException(e);
+
+        }
+        return exists;
     }
-    	return exists;
+
+    //Checks if actorName is already and author in the database
+    private static boolean checkActor(Connection conn, String actorName)
+            throws SQLException {
+
+        PreparedStatement stmt = null;
+        boolean exists = false;
+        try {
+            String query = "SELECT Count(*) FROM Actor WHERE Actor_Name = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, actorName);
+            ResultSet set = stmt.executeQuery();
+            int number = set.getInt(1);
+
+            if (!(number == 0)) {
+                exists = true;
+            }
+
+        } catch (SQLException e) {
+            printSQLException(e);
+
+        }
+        return exists;
+    }
+
+    //Checks if directorName is already and author in the database
+    private static boolean checkArtist(Connection conn, String artistName)
+            throws SQLException {
+
+        PreparedStatement stmt = null;
+        boolean exists = false;
+        try {
+            String query = "SELECT Count(*) FROM Artist WHERE Artist_Name = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, artistName);
+            ResultSet set = stmt.executeQuery();
+            int number = set.getInt(1);
+
+            if (!(number == 0)) {
+                exists = true;
+            }
+
+        } catch (SQLException e) {
+            printSQLException(e);
+
+        }
+        return exists;
     }
 
     private static void orderMovie(Connection conn, String title) {
@@ -773,6 +926,10 @@ public final class Main {
             }
             System.out.println();
             input = menu(in);
+        }
+
+        if (conn != null) {
+            conn.close();
         }
     }
 
