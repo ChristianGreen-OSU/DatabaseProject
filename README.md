@@ -9,6 +9,14 @@ needs a simple database management system to support their inventory and circula
 operations. This will require to design the database as well to develop a Java application
 to integrate with the database.
 
+# Table of Contents
+CREATESQL.txt - creates the database with no data
+DATA.txt - SQL statements to insert data into database
+INSERT_DELETE_Statements.txt - all SQL statements to delete and insert example data
+Library (1).db - the final database file
+Main.java - the java 
+
+
 # Outline
 ## Part I – The Final Report
 ### Section 1 - Database Description
