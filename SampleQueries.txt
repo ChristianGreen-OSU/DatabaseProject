@@ -1,0 +1,172 @@
+Sample SQL Queries
+
+Checkpoint 4:
+
+3a)
+SELECT Title
+FROM Album, Track, Media
+WHERE Media.Item_No = Album.Item_No
+	AND Track.Album_Name = Album.Name
+	AND Media.Year < 2000
+	AND Album.Artist_Name = "AC/DC";
+
+3b)
+SELECT Title, Checkout_Date
+FROM Movie, Customer, Checks_out
+WHERE Movie.Item_No = Checks_out.Item_No
+	AND Checks_out.lib_card_No = Customer.lib_card_No
+	AND Customer.lib_card_No = "5";
+
+3c)
+SELECT Name, Album.Item_No
+FROM Album, Media
+WHERE Album.Item_No = Media.Item_No
+	AND Media.Num_Copies < 2;
+
+3d)
+SELECT Customer.F_Name, Movie.Title
+FROM Checks_out, Movie, Customer
+WHERE Checks_out.Item_No = Movie.Item_No
+       AND Customer.lib_card_No = Checks_out.lib_card_No
+	AND Movie.Actor_Name = "Demetra Points";
+
+3e)
+SELECT count(Checks_out.Item_No) AS num_of_checked_out_albums
+FROM Customer, Album, Checks_out
+WHERE Album.Item_No = Checks_out.Item_No
+	AND Customer.lib_card_No = "1"
+	AND Customer.lib_card_No = Checks_out.lib_card_No;
+
+3f)
+SELECT Checks_out.lib_card_No, MAX(No_Movies_Checked_Out)
+FROM
+   (SELECT Checks_out.lib_card_No,
+          COUNT(Checks_out.Item_No) AS No_Movies_Checked_Out
+     FROM Checks_out,
+          Movie,
+          Customer
+    WHERE Checks_out.Item_No = Movie.Item_No AND
+          Customer.lib_card_No = Checks_out.lib_card_No
+    GROUP BY Customer.lib_card_No);
+
+4a)
+SELECT Movie.Title, Actor_Name, Director_Name
+FROM Movie
+WHERE Actor_Name = "Sidonia Cadamy" AND Director_Name = "Andy Ackerman";
+
+4b)
+SELECT Movie.Title, Media.Location, Media.Num_Copies
+FROM Movie, Media
+WHERE Movie.Item_No = Media.Item_No;
+
+4c)
+SELECT Author.Name, Audiobook.Title, Author.Genre
+FROM Author, Audiobook, Writes
+WHERE Audiobook.Item_No = Writes.Item_No
+   AND Author.Name = Writes.Name
+   AND Author.Genre = "Fiction";
+
+Checkpoint 5:
+
+4a)
+SELECT Customer.F_Name, Customer.L_Name, Sum(Length) AS "Total Combined Running Time of Checked out Movies"
+	FROM Movie, Customer, Checks_out
+	WHERE Movie.Item_No = Checks_out.Item_No
+	AND Customer.lib_card_No = Checks_out.lib_card_No
+	GROUP BY Customer.Email;
+
+4b)
+SELECT Customer.lib_card_No, Customer.F_Name, Customer.L_Name, Customer.Email
+FROM Customer JOIN Checks_out ON Customer.lib_card_No = Checks_out.lib_card_No
+GROUP BY F_Name, L_Name, Email
+HAVING COUNT(*) > (
+SELECT AVG(COUNT)
+FROM (
+SELECT Customer.Email, COUNT(*) COUNT
+FROM Customer JOIN Checks_out ON Checks_out.lib_card_No = Customer.lib_card_No
+GROUP BY Email
+)
+);
+
+4c)
+SELECT Title, Media.Num_times_checked_out
+	FROM Movie, Media
+	WHERE Movie.Item_No = Media.Item_No
+	GROUP BY Movie.Title
+	ORDER BY Media.Num_times_checked_out DESC;
+
+4d)
+SELECT Album.Name, COUNT(*)
+FROM Album
+   JOIN Media ON Album.Item_No = Media.Item_No
+   JOIN Checks_out ON Media.Item_No = Checks_out.Item_No
+GROUP BY Album.Name
+ORDER BY COUNT(*) DESC;
+
+4e)
+SELECT Actor_Name, Media.Num_times_checked_out
+FROM Movie, Media
+WHERE Movie.Item_No = Media.Item_No
+GROUP BY Actor_Name
+ORDER BY Media.Num_times_checked_out DESC
+LIMIT 1;
+
+4f)
+SELECT Artist_Name, SUM(Album_Length) * Media.Num_times_checked_out AS "Total_Listening_Time_sec"
+	FROM Album, Media
+	WHERE Album.Item_No = Media.Item_No
+	GROUP BY Artist_Name
+ORDER BY Total_Listening_Time_sec DESC
+LIMIT 1;
+
+4g)
+SELECT Customer.lib_card_No, Customer.F_Name, Customer.L_Name, Customer.Email
+FROM Customer
+   JOIN Checks_out ON Customer.lib_card_No = Checks_out.lib_card_No
+   JOIN Media ON Checks_out.Item_No = Media.Item_No
+   JOIN Movie ON Movie.Item_No = Media.Item_No
+   JOIN Actor ON Actor.Actor_Name = Movie.Actor_Name
+WHERE (
+   SELECT Movie.Actor_Name
+       FROM Movie
+           JOIN Media ON Movie.Item_No = Media.Item_No
+           JOIN Checks_out ON Media.Item_No = Checks_out.Item_No
+           JOIN Actor ON Movie.Actor_Name = Actor.Actor_Name
+       GROUP BY Movie.Actor_Name
+       ORDER BY MAX(Num_times_checked_out) DESC
+       LIMIT 1
+   ) LIKE Movie.Actor_Name;
+
+4h)
+SELECT DISTINCT NAME
+FROM Checks_out
+   JOIN Media ON Media.Item_No = Checks_out.Item_No
+   JOIN Album ON Album.Item_No = Media.Item_No
+   JOIN Artist ON Artist.Artist_Name = Album.Artist_Name
+WHERE Checks_out.lib_card_No IN (
+   SELECT Customer.lib_card_No
+   FROM Customer
+       JOIN Checks_out ON Checks_out.lib_card_No = Customer.lib_card_No
+   GROUP BY Customer.F_Name, Customer.L_Name, Customer.Email
+   HAVING COUNT(*) > (
+       SELECT AVG(count)
+           FROM (
+               SELECT Customer.Email, COUNT(*) AS count
+                   FROM Customer
+                       JOIN Checks_out ON Checks_out.lib_card_No = Customer.lib_card_No
+                   GROUP BY Customer.Email
+           )
+   )
+);
+
+
+
+
+
+
+
+
+
+
+
+
