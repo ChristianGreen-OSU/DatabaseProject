@@ -1,4 +1,3 @@
-package osu.cse3241;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -13,7 +12,6 @@ import java.util.Scanner;
  * @authors Christian Barrett, Zach Mason, Andrew Kramer, Avijit Kumar
  */
 public final class Main {
-
 
     /**
      * The database file name.
@@ -108,7 +106,7 @@ public final class Main {
             int numCopies = Integer.parseInt(in.nextLine());
             System.out.println("Enter the price: ");
             int price = Integer.parseInt(in.nextLine());
-            
+
             if (!checkArtist(Conn, Artist_Name)) {
                 System.out.println("Is the artist still active? (Y/N)");
                 String active = in.nextLine();
@@ -193,22 +191,20 @@ public final class Main {
                     price);
             insertMovie(Conn, Item_No, Title, Length, dName, aName);
 
-        } else if (choice.equals("p") || choice.equals("patron"))
-        {
-        	System.out.println("Enter their new Library Card Number: ");
-        	String lib_card_No = in.nextLine();
-        	System.out.println("Enter their email : ");
-        	String email = in.nextLine();
-        	System.out.println("Enter their address: ");
-        	String address = in.nextLine();
-        	System.out.println("Enter their first name: ");
-        	String fName = in.nextLine();
-        	System.out.println("Enter their last name ");
-        	String lName = in.nextLine();
-        	
-        	insertPatron(Conn, lib_card_No, email, address, fName, lName);
-        }
-        else {
+        } else if (choice.equals("p") || choice.equals("patron")) {
+            System.out.println("Enter their new Library Card Number: ");
+            String lib_card_No = in.nextLine();
+            System.out.println("Enter their email : ");
+            String email = in.nextLine();
+            System.out.println("Enter their address: ");
+            String address = in.nextLine();
+            System.out.println("Enter their first name: ");
+            String fName = in.nextLine();
+            System.out.println("Enter their last name ");
+            String lName = in.nextLine();
+
+            insertPatron(Conn, lib_card_No, email, address, fName, lName);
+        } else {
             System.out.println("Invalid entry - Try again!");
         }
 
@@ -276,7 +272,7 @@ public final class Main {
             System.out.println("Enter their name: ");
             String name = in.nextLine();
             searchDirector(Conn, name);
-        }  else if (choice.equals("d") || choice.equals("director")) {
+        } else if (choice.equals("d") || choice.equals("director")) {
             System.out.println("Enter the library card number: ");
             String lib_card_No = in.nextLine();
             searchPatron(Conn, lib_card_No);
@@ -286,8 +282,8 @@ public final class Main {
 
     }
 
-    private static void orderRecords(Scanner in, Connection Conn, int Max_Item_No)
-            throws SQLException {
+    private static void orderRecords(Scanner in, Connection Conn,
+            int Max_Item_No) throws SQLException {
 
         System.out.println(
                 "Which media type would you like to order? (A - Album, B - Book, M - Movie): ");
@@ -297,8 +293,8 @@ public final class Main {
         System.out.println();
 
         if (choice.equals("a") || choice.equals("album")) {
-            
-        	System.out.println("Enter the Album Name: ");
+
+            System.out.println("Enter the Album Name: ");
             String Name = in.nextLine();
             System.out.println("Enter the number of songs: ");
             int Num_Songs = Integer.parseInt(in.nextLine());
@@ -320,11 +316,11 @@ public final class Main {
                 }
                 insertArtist(Conn, Artist_Name, activeStatus);
             }
-            
+
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
             orderMedia(Conn, Item_No, year, genre, price);
         } else if (choice.equals("b") || choice.equals("book")) {
-        	System.out.println("Enter the Book Title: ");
+            System.out.println("Enter the Book Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the number of pages: ");
             int Length = Integer.parseInt(in.nextLine());
@@ -347,8 +343,8 @@ public final class Main {
             insertBook(Conn, Item_No, Title, Length, Chapters);
             insertWrites(Conn, name, Item_No);
         } else if (choice.equals("m") || choice.equals("movie")) {
-            
-        	System.out.println("Enter the Movie Title: ");
+
+            System.out.println("Enter the Movie Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the length of the movie in minutes: ");
             int Length = Integer.parseInt(in.nextLine());
@@ -376,44 +372,47 @@ public final class Main {
             orderMedia(Conn, Item_No, year, genre, price);
             insertMovie(Conn, Item_No, Title, Length, dName, aName);
 
-        	
         } else {
             System.out.println("Invalid entry - Try again!");
         }
 
     }
 
-    private static void checkOut(Scanner in, Connection Conn) throws SQLException {
-    	System.out.println("Enter the item number of the item you would like to check out: ");
-    	int Item_No = Integer.parseInt(in.nextLine());
-    	System.out.println("Enter your library card number: ");
-    	String lib_card_No = in.nextLine();
-    	
-    	int available = findAvailable(Conn, Item_No);
-    	if(available > 0) {
-    		insertCheckOut(Conn, lib_card_No, Item_No);
-    		incrementCheckedOut(Conn, Item_No);
-    	}
-    	else {
-    		System.out.println("This item is not available.");
-    	}
+    private static void checkOut(Scanner in, Connection Conn)
+            throws SQLException {
+        System.out.println(
+                "Enter the item number of the item you would like to check out: ");
+        int Item_No = Integer.parseInt(in.nextLine());
+        System.out.println("Enter your library card number: ");
+        String lib_card_No = in.nextLine();
+
+        int available = findAvailable(Conn, Item_No);
+        if (available > 0) {
+            insertCheckOut(Conn, lib_card_No, Item_No);
+            incrementCheckedOut(Conn, Item_No);
+        } else {
+            System.out.println("This item is not available.");
+        }
     }
-    
-    private static void checkIn(Scanner in, Connection Conn) throws SQLException {
-    	System.out.println("Enter your library card number: ");
-    	String lib_card_No = in.nextLine();
-    	System.out.println("Enter the item number of the item you would like to check in: ");
-    	int Item_No = Integer.parseInt(in.nextLine());
-    	
-    	deleteCheckOut(Conn, lib_card_No, Item_No);
-    	decrementCheckedOut(Conn, Item_No);
-    	
+
+    private static void checkIn(Scanner in, Connection Conn)
+            throws SQLException {
+        System.out.println("Enter your library card number: ");
+        String lib_card_No = in.nextLine();
+        System.out.println(
+                "Enter the item number of the item you would like to check in: ");
+        int Item_No = Integer.parseInt(in.nextLine());
+
+        deleteCheckOut(Conn, lib_card_No, Item_No);
+        decrementCheckedOut(Conn, Item_No);
+
     }
-    
-    private static void insertCheckOut(Connection Conn, String lib_card_No, int Item_No) throws SQLException{
-    	PreparedStatement stmt = null;
-    	try {
-    		String queryChecksOut = " INSERT into Checks_Out (lib_card_No, Item_No, Checkout_Date)"
+
+    private static void insertCheckOut(Connection Conn, String lib_card_No,
+            int Item_No) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryChecksOut = " INSERT into Checks_Out (lib_card_No, Item_No, Checkout_Date)"
                     + " values (?, ?, ?)";
             stmt = Conn.prepareStatement(queryChecksOut);
 
@@ -422,16 +421,16 @@ public final class Main {
             stmt.execute();
             System.out.println("Successful Entry");
 
-
         } catch (SQLException e) {
             printSQLException(e);
         }
     }
-    
-    private static void deleteCheckOut(Connection Conn, String lib_card_No, int Item_No) throws SQLException {
-    	PreparedStatement stmt = null;
-    	try {
-    		String queryChecksOut = " DELETE from Checks_Out WHERE lib_card_No = ? AND Item_No = ?";
+
+    private static void deleteCheckOut(Connection Conn, String lib_card_No,
+            int Item_No) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryChecksOut = " DELETE from Checks_Out WHERE lib_card_No = ? AND Item_No = ?";
             stmt = Conn.prepareStatement(queryChecksOut);
 
             stmt.setString(1, lib_card_No);
@@ -439,31 +438,18 @@ public final class Main {
             stmt.execute();
             System.out.println("Successful Deletion");
 
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+    }
 
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-    }
-    
-    private static void incrementCheckedOut(Connection Conn, int Item_No) throws SQLException {
-    	PreparedStatement stmt = null;
-    	try {
-    		String queryChecksOut = " UPDATE Media SET Num_times_checked_out = Num_times_checked_out + 1 WHERE Item_No = ?";
+    private static void incrementCheckedOut(Connection Conn, int Item_No)
+            throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryChecksOut = " UPDATE Media SET Num_times_checked_out = Num_times_checked_out + 1 WHERE Item_No = ?";
             stmt = Conn.prepareStatement(queryChecksOut);
-            
-            stmt.setInt(1, Item_No);
-            stmt.execute();
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-    }
-    
-    private static void decrementCheckedOut(Connection Conn, int Item_No) throws SQLException  {
-    	PreparedStatement stmt = null;
-    	try {
-    		String queryChecksOut = " UPDATE Media SET Num_times_checked_out = Num_times_checked_out - 1 WHERE Item_No = ?";
-            stmt = Conn.prepareStatement(queryChecksOut);
-            
+
             stmt.setInt(1, Item_No);
             stmt.execute();
         } catch (SQLException e) {
@@ -471,23 +457,38 @@ public final class Main {
         }
     }
 
-    private static int findAvailable(Connection Conn, int Item_No) throws SQLException {
-            PreparedStatement stmt = null;
-            int numAvailable = 0;
-            try {
-                String query = "SELECT Num_Copies, Num_times_checked_out FROM Media WHERE Item_No = ?";
-                stmt = Conn.prepareStatement(query);
-                stmt.setInt(1, Item_No);
-                ResultSet set = stmt.executeQuery();
-                numAvailable = set.getInt(1) - set.getInt(2);
-                System.out.println("Sucessfully searched album records.");
+    private static void decrementCheckedOut(Connection Conn, int Item_No)
+            throws SQLException {
+        PreparedStatement stmt = null;
+        try {
+            String queryChecksOut = " UPDATE Media SET Num_times_checked_out = Num_times_checked_out - 1 WHERE Item_No = ?";
+            stmt = Conn.prepareStatement(queryChecksOut);
 
-            } catch (SQLException e) {
-                printSQLException(e);
-            }
-            return numAvailable;
+            stmt.setInt(1, Item_No);
+            stmt.execute();
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
     }
-    
+
+    private static int findAvailable(Connection Conn, int Item_No)
+            throws SQLException {
+        PreparedStatement stmt = null;
+        int numAvailable = 0;
+        try {
+            String query = "SELECT Num_Copies, Num_times_checked_out FROM Media WHERE Item_No = ?";
+            stmt = Conn.prepareStatement(query);
+            stmt.setInt(1, Item_No);
+            ResultSet set = stmt.executeQuery();
+            numAvailable = set.getInt(1) - set.getInt(2);
+            System.out.println("Sucessfully searched album records.");
+
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return numAvailable;
+    }
+
 //    private static void editRecords(Scanner in, Inventory inv) {
 //        System.out.println(
 //                "Which record would you like to edit? (enter an Item Number)");
@@ -531,7 +532,6 @@ public final class Main {
 //
 //        System.out.println("Records Searched!");
 //    }
-    
 
     private static String menu(Scanner in) {
         System.out.println(
@@ -540,9 +540,12 @@ public final class Main {
                 "(b) Edit/Delete records (movies, audiobooks, albums, ..)");
         System.out.println("(c) Search (movies, audiobooks, albums, ..)");
         System.out.println("(d) Order items (movies, audiobooks, albums, ..)");
-        System.out.println("(e) Check out items (movies, audiobooks, albums,..)");
-        System.out.println("(f) Check in items (movies, audiobooks, albums,..)");
-        System.out.println("(g) Add ordered items to the records (movies, audiobooks, albums,..)");
+        System.out
+                .println("(e) Check out items (movies, audiobooks, albums,..)");
+        System.out
+                .println("(f) Check in items (movies, audiobooks, albums,..)");
+        System.out.println(
+                "(g) Add ordered items to the records (movies, audiobooks, albums,..)");
         System.out.println("(h) Generate reports");
         System.out.println("(x) to Exit Program");
         String input = in.nextLine();
@@ -554,153 +557,167 @@ public final class Main {
      * Requires Item_No to be defined uniquely in type Media but not an Album,
      * Track, Movie, or Book
      */
-    private static void generateReports(Scanner in, Connection conn) throws SQLException {
-    	System.out.println();
-    	System.out.println("(a) Find the total number of albums, movies and audiobooks checked out by a single patron ");
-    	System.out.println("(b) Find the most popular actor in the database ");
-    	System.out.println("(c) Find the most listened to artist in the database ");
-    	System.out.println("(d) Find the most listened to author in the database ");
-    	System.out.println("(e) Find the patron who has checked out the most videos and the total number of videos they have checked out ");
-    	System.out.println("(f) Find the titles of all tracks by ARTIST released before YEAR. ");
-    	String input = in.nextLine();
-    	input = input.toLowerCase();
-    	
-    	if(input.equals("a")) {
-    		System.out.println("Enter the library card number: ");
-    		String lib_card_No = in.nextLine();
-    		report1(conn, lib_card_No);
-    	} else if(input.equals("b")) {
-    		report2(conn);
-    	} else if(input.equals("c")) {
-    		report3(conn);
-    	} else if(input.equals("d")) {
-    		report4(conn);
-    	} else if(input.equals("e")) {
-    		report5(conn);
-    	} else if(input.equals("f")) {
-    		System.out.println("Enter the name of the artist: ");
-    		String artist_Name = in.nextLine();
-    		System.out.println("Enter the year");
-    		int year = Integer.parseInt(in.nextLine());
-    		report6(conn, artist_Name, year);
-    	}
-    	
-    	
+    private static void generateReports(Scanner in, Connection conn)
+            throws SQLException {
+        System.out.println();
+        System.out.println(
+                "(a) Find the total number of albums, movies and audiobooks checked out by a single patron ");
+        System.out.println("(b) Find the most popular actor in the database ");
+        System.out.println(
+                "(c) Find the most listened to artist in the database ");
+        System.out.println(
+                "(d) Find the most listened to author in the database ");
+        System.out.println(
+                "(e) Find the patron who has checked out the most videos and the total number of videos they have checked out ");
+        System.out.println(
+                "(f) Find the titles of all tracks by ARTIST released before YEAR. ");
+        String input = in.nextLine();
+        input = input.toLowerCase();
+
+        if (input.equals("a")) {
+            System.out.println("Enter the library card number: ");
+            String lib_card_No = in.nextLine();
+            report1(conn, lib_card_No);
+        } else if (input.equals("b")) {
+            report2(conn);
+        } else if (input.equals("c")) {
+            report3(conn);
+        } else if (input.equals("d")) {
+            report4(conn);
+        } else if (input.equals("e")) {
+            report5(conn);
+        } else if (input.equals("f")) {
+            System.out.println("Enter the name of the artist: ");
+            String artist_Name = in.nextLine();
+            System.out.println("Enter the year");
+            int year = Integer.parseInt(in.nextLine());
+            report6(conn, artist_Name, year);
+        }
+
     }
-    
-    private static void report1(Connection conn, String lib_card_No) throws SQLException{
-    	PreparedStatement stmt1 = null;
-    	PreparedStatement stmt2 = null;
-    	PreparedStatement stmt3 = null;
+
+    private static void report1(Connection conn, String lib_card_No)
+            throws SQLException {
+        PreparedStatement stmt1 = null;
+        PreparedStatement stmt2 = null;
+        PreparedStatement stmt3 = null;
         try {
             String query1 = "SELECT count(Checks_Out.Item_No) FROM Customer, Album, Checks_Out "
-            		+ "WHERE Album.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
+                    + "WHERE Album.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
             stmt1 = conn.prepareStatement(query1);
             stmt1.setString(1, lib_card_No);
             ResultSet rSet1 = stmt1.executeQuery();
-            
+
             String query2 = "SELECT count(Checks_Out.Item_No) FROM Customer, Audiobook, Checks_Out "
-            		+ "WHERE Audiobook.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
+                    + "WHERE Audiobook.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
             stmt2 = conn.prepareStatement(query2);
             stmt2.setString(1, lib_card_No);
             ResultSet rSet2 = stmt2.executeQuery();
-            
+
             String query3 = "SELECT count(Checks_Out.Item_No) FROM Customer, Movie, Checks_Out "
-            		+ "WHERE Movie.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
+                    + "WHERE Movie.Item_No = Checks_Out.Item_No AND Customer.lib_card_No = ? AND Customer.lib_card_No = Checks_out.lib_card_No";
             stmt3 = conn.prepareStatement(query3);
             stmt3.setString(1, lib_card_No);
             ResultSet rSet3 = stmt3.executeQuery();
-            
+
             int total = rSet1.getInt(1) + rSet2.getInt(1) + rSet3.getInt(1);
-            System.out.println("The total number of movies, audiobooks, and albums checked out is " + total);
-            
+            System.out.println(
+                    "The total number of movies, audiobooks, and albums checked out is "
+                            + total);
+
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
-    
-    private static void report2(Connection conn) throws SQLException{
-    	PreparedStatement stmt = null;
-    	try {
+
+    private static void report2(Connection conn) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
             String query = "SELECT Actor_Name FROM Movie, Media WHERE Movie.Item_No = Media.Item_No GROUP BY Actor_Name ORDER BY Media.Num_times_checked_out DESC LIMIT 1;";
             stmt = conn.prepareStatement(query);
             ResultSet set = stmt.executeQuery();
-            
-            System.out.println("The most popular actor is: " + set.getString(1));
+
+            System.out
+                    .println("The most popular actor is: " + set.getString(1));
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
-    
-    private static void report3(Connection conn) {
-    	PreparedStatement stmt = null;
-    	try {
+
+    private static void report3(Connection conn) throws SQLException {
+        PreparedStatement stmt = null;
+        try {
             String query = "SELECT Artist_Name, SUM(Album_Length)* Media.Num_times_checked_out AS \"Total_Listening_Time_sec\" "
-            		+ "FROM Album, Media WHERE Album.Item_No = Media.Item_No GROUP BY Artist_Name, Order By Total_Listening_Time_sec "
-            		+ "DESC LIMIT 1;";
+                    + "FROM Album, Media WHERE Album.Item_No = Media.Item_No GROUP BY Artist_Name Order By Total_Listening_Time_sec "
+                    + "DESC LIMIT 1;";
             stmt = conn.prepareStatement(query);
             ResultSet set = stmt.executeQuery();
-            
-            System.out.println("The most popular artist is: " + set.getString(1));
+
+            System.out
+                    .println("The most popular artist is: " + set.getString(1));
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
-    
+
     private static void report4(Connection conn) {
-    	PreparedStatement stmt = null;
-    	try {
+        PreparedStatement stmt = null;
+        try {
             String query = "SELECT Author.Name, SUM(Length)* Media.Num_times_checked_out AS \"Total_Listening_Time_sec\" "
-            		+ "FROM Author, Audiobook, Writes, Media WHERE Audiobook.Item_No = Media.Item_No "
-            		+ "AND Author.Name = Writes.Name AND Writes.Item_No = Audiobook.Item_No"
-            		+ "GROUP BY Artist_Name, Order By Total_Listening_Time_sec "
-            		+ "DESC LIMIT 1;";
+                    + "FROM Author, Audiobook, Writes, Media WHERE Audiobook.Item_No = Media.Item_No "
+                    + "AND Author.Name = Writes.Name AND Writes.Item_No = Audiobook.Item_No "
+                    + "GROUP BY Author.Name ORDER BY Total_Listening_Time_sec "
+                    + "DESC LIMIT 1;";
             stmt = conn.prepareStatement(query);
             ResultSet set = stmt.executeQuery();
-            
-            System.out.println("The most popular author is: " + set.getString(1));
+
+            System.out
+                    .println("The most popular author is: " + set.getString(1));
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
+
     private static void report5(Connection conn) {
-    	PreparedStatement stmt = null;
-    	try {
-            String query = "SELECT Checks_Out.lib_card_No, MAX(No_Movies_Checked_Out) FROM "
-            		+ "(SELECT Checks_Out.lib_card_No, COUNT(Checks_out.Item_No) AS No_Movies_Checked_Out "
-            		+ "FROM Checks_Out, Movie, Customer Where Checks_Out.Item_No = Movie.Item_No AND Customer.lib_card_No "
-            		+ "= Checks_Out.lib_card_No GROUP BY Customer.lib_card_No;";
+
+        PreparedStatement stmt = null;
+        try {
+            String query = "SELECT lib_card_No, MAX(No_Movies_Checked_Out) FROM No_Movies_Checked; ";
             stmt = conn.prepareStatement(query);
             ResultSet set = stmt.executeQuery();
-            
-            System.out.println("The patron who has checked out the most videos is: " + set.getString(1));
-            System.out.println("They have checked out " + set.getInt(2) + " minutes of movies.");
+
+            System.out.println(
+                    "The patron who has checked out the most videos is: "
+                            + set.getString(1));
+            System.out.println(
+                    "They have checked out " + set.getInt(2) + " movies.");
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
-    
+
     private static void report6(Connection conn, String artist_Name, int year) {
-    	PreparedStatement stmt = null;
-    	try {
+        PreparedStatement stmt = null;
+        try {
             String query = "SELECT Title FROM Album, Track, Media WHERE Media.Item_No = Album.Item_No "
-            		+ "AND Track.Album_Name = Album.Name AND Media.Year < ? AND Album.Artist_Name = ?;";
+                    + "AND Track.Album_Name = Album.Name AND Media.Year < ? AND Album.Artist_Name = ?;";
             stmt = conn.prepareStatement(query);
             stmt.setInt(1, year);
             stmt.setString(2, artist_Name);
             ResultSet set = stmt.executeQuery();
-            
+
             System.out.println(set.getString(1));
-            while(set.next()) {
-            	System.out.println(set.getString(1));
+            while (set.next()) {
+                System.out.println(set.getString(1));
             }
         } catch (SQLException e) {
             printSQLException(e);
-        } 
+        }
     }
-    
-    private static void insertPatron(Connection conn, String lib_card_No, String F_Name, String L_Name, String Email, String
-    		Address) throws SQLException {
+
+    private static void insertPatron(Connection conn, String lib_card_No,
+            String F_Name, String L_Name, String Email, String Address)
+            throws SQLException {
         PreparedStatement stmt = null;
         try {
 
@@ -727,8 +744,7 @@ public final class Main {
         }
 
     }
-    
-    
+
     private static void insertAlbum(Connection conn, int itemNo,
             String albumName, int numSongs, String artistName)
             throws SQLException {
@@ -1010,7 +1026,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Name");
                 int Length = rSet.getInt("Album_Length");
                 int numSongs = rSet.getInt("Num_Songs");
@@ -1045,7 +1061,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Title");
                 int Length = rSet.getInt("Length");
                 int Chapters = rSet.getInt("Chapters");
@@ -1078,7 +1094,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Title");
                 int Length = rSet.getInt("Length");
                 String DirectorName = rSet.getString("Director_Name");
@@ -1102,19 +1118,19 @@ public final class Main {
             }
         }
     }
-    
+
     private static void searchAuthor(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
         ResultSet rSet = null;
         try {
             String query = "SELECT * FROM Author, Writes, Audiobook WHERE Author.Name = Writes.Name"
-            		+ "AND Audiobook.Item_No = Writes.Item_No AND Author.Name LIKE ?";
+                    + "AND Audiobook.Item_No = Writes.Item_No AND Author.Name LIKE ?";
             stmt = conn.prepareStatement(query);
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Title");
                 int Length = rSet.getInt("Length");
                 int Chapters = rSet.getInt("Chapters");
@@ -1136,10 +1152,10 @@ public final class Main {
             }
         }
     }
-    
+
     private static void searchActor(Connection conn, String name)
             throws SQLException {
-    	PreparedStatement stmt = null;
+        PreparedStatement stmt = null;
         ResultSet rSet = null;
         try {
             String query = "SELECT * FROM Movie WHERE Actor_Name LIKE ?";
@@ -1147,7 +1163,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Title");
                 int Length = rSet.getInt("Length");
                 String DirectorName = rSet.getString("Director_Name");
@@ -1171,10 +1187,10 @@ public final class Main {
             }
         }
     }
-    
+
     private static void searchDirector(Connection conn, String name)
             throws SQLException {
-    	PreparedStatement stmt = null;
+        PreparedStatement stmt = null;
         ResultSet rSet = null;
         try {
             String query = "SELECT * FROM Movie WHERE Director_Name LIKE ?";
@@ -1182,7 +1198,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Title");
                 int Length = rSet.getInt("Length");
                 String DirectorName = rSet.getString("Director_Name");
@@ -1206,7 +1222,7 @@ public final class Main {
             }
         }
     }
-    
+
     private static void searchArtist(Connection conn, String name)
             throws SQLException {
         PreparedStatement stmt = null;
@@ -1217,7 +1233,7 @@ public final class Main {
             stmt.setString(1, name);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	int Item_No = rSet.getInt("Item_No");
+                int Item_No = rSet.getInt("Item_No");
                 String Title = rSet.getString("Name");
                 int Length = rSet.getInt("Album_Length");
                 int numSongs = rSet.getInt("Num_Songs");
@@ -1241,7 +1257,7 @@ public final class Main {
             }
         }
     }
-    
+
     private static void searchPatron(Connection conn, String lib_card_No)
             throws SQLException {
         PreparedStatement stmt = null;
@@ -1252,14 +1268,14 @@ public final class Main {
             stmt.setString(1, lib_card_No);
             rSet = stmt.executeQuery();
             while (rSet.next()) {
-            	String Email = rSet.getString("Email");
-            	String F_Name = rSet.getString("F_Name");
-            	String L_Name = rSet.getString("L_Name");
-            	String Address = rSet.getString("Address");
-            	System.out.println("Library Card Number: " + lib_card_No);
-            	System.out.println("Name: " + F_Name + " " + L_Name);
-            	System.out.println("Email: " + Email);
-            	System.out.println("Address: " + Address);
+                String Email = rSet.getString("Email");
+                String F_Name = rSet.getString("F_Name");
+                String L_Name = rSet.getString("L_Name");
+                String Address = rSet.getString("Address");
+                System.out.println("Library Card Number: " + lib_card_No);
+                System.out.println("Name: " + F_Name + " " + L_Name);
+                System.out.println("Email: " + Email);
+                System.out.println("Address: " + Address);
             }
             System.out.println("Sucessfully searched Album record.");
 
@@ -1386,7 +1402,7 @@ public final class Main {
         }
         return exists;
     }
-    
+
     private static void orderMedia(Connection conn, int item_No, int year,
             String genre, int price) throws SQLException {
         PreparedStatement stmt = null;
@@ -1459,26 +1475,28 @@ public final class Main {
         }
         return false;
     }
-    
+
     private static void updateOrder(Scanner in, Connection conn) {
-    	System.out.println("Enter the item number of the order you wish to add to the collection: ");
-    	int Item_No = Integer.parseInt(in.nextLine());
-    	System.out.println("Enter the number of copies: ");
-    	int copies = Integer.parseInt(in.nextLine());
-    	System.out.println("Enter the new location: ");
-    	String location = in.nextLine();
-    	System.out.println("Enter the type: ");
-    	String type = in.nextLine();
-    	
-    	updateOrderMedia(conn, Item_No, copies, location, type);
+        System.out.println(
+                "Enter the item number of the order you wish to add to the collection: ");
+        int Item_No = Integer.parseInt(in.nextLine());
+        System.out.println("Enter the number of copies: ");
+        int copies = Integer.parseInt(in.nextLine());
+        System.out.println("Enter the new location: ");
+        String location = in.nextLine();
+        System.out.println("Enter the type: ");
+        String type = in.nextLine();
+
+        updateOrderMedia(conn, Item_No, copies, location, type);
     }
-    
-    private static void updateOrderMedia(Connection conn, int Item_No, int copies, String location, String type) {
-    	PreparedStatement stmt = null;
-    	try {
-    		String queryChecksOut = " UPDATE Media SET Location = ?, Type = ?, Num_Copies = ? WHERE Item_No = ?";
+
+    private static void updateOrderMedia(Connection conn, int Item_No,
+            int copies, String location, String type) {
+        PreparedStatement stmt = null;
+        try {
+            String queryChecksOut = " UPDATE Media SET Location = ?, Type = ?, Num_Copies = ? WHERE Item_No = ?";
             stmt = conn.prepareStatement(queryChecksOut);
-            
+
             stmt.setString(1, location);
             stmt.setString(2, type);
             stmt.setInt(3, Item_No);
@@ -1503,23 +1521,23 @@ public final class Main {
 
         while (!input.equals("x")) {
             if (input.equals("a")) { //add new record
-            	Max_Item_No++;
-            	addRecords(in, conn, Max_Item_No);
+                Max_Item_No++;
+                addRecords(in, conn, Max_Item_No);
             } else if (input.equals("b")) { //delete record
                 deleteRecords(in, conn);
             } else if (input.equals("c")) { //Search for record
                 searchRecords(in, conn);
             } else if (input.equals("d")) { //order items
-            	Max_Item_No++;
-            	orderRecords(in, conn, Max_Item_No);
+                Max_Item_No++;
+                orderRecords(in, conn, Max_Item_No);
             } else if (input.equals("e")) {
-            	checkOut(in, conn);
+                checkOut(in, conn);
             } else if (input.equals("f")) {
-            	checkIn(in, conn);
+                checkIn(in, conn);
             } else if (input.equals("g")) {
-            	updateOrder(in, conn);
+                updateOrder(in, conn);
             } else if (input.equals("h")) {
-            	generateReports(in, conn);
+                generateReports(in, conn);
             }
             System.out.println();
             input = menu(in);
