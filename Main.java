@@ -86,8 +86,6 @@ public final class Main {
         int Item_No = Max_Item_No;
 
         if (choice.equals("a") || choice.equals("album")) {
-            //System.out.println("Enter the item number: ");
-            //int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Album Name: ");
             String Name = in.nextLine();
             System.out.println("Enter the number of songs: ");
@@ -116,14 +114,11 @@ public final class Main {
                 }
                 insertArtist(Conn, Artist_Name, activeStatus);
             }
-            //TODO: Do we have a way of adding Tracks?
 
             insertMedia(Conn, Item_No, year, genre, location, type, numCopies,
                     price);
             insertAlbum(Conn, Item_No, Name, Num_Songs, Artist_Name);
         } else if (choice.equals("b") || choice.equals("book")) {
-            //System.out.println("Enter the item number: ");
-            //int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Book Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the number of pages: ");
@@ -154,8 +149,6 @@ public final class Main {
             insertBook(Conn, Item_No, Title, Length, Chapters);
             insertWrites(Conn, name, Item_No);
         } else if (choice.equals("m") || choice.equals("movie")) {
-            //System.out.println("Enter the item number: ");
-            //int Item_No = Integer.parseInt(in.nextLine());
             System.out.println("Enter the Movie Title: ");
             String Title = in.nextLine();
             System.out.println("Enter the length of the movie in minutes: ");
@@ -489,50 +482,6 @@ public final class Main {
         return numAvailable;
     }
 
-//    private static void editRecords(Scanner in, Inventory inv) {
-//        System.out.println(
-//                "Which record would you like to edit? (enter an Item Number)");
-//        int itemNo = Integer.parseInt(in.nextLine());
-//        Media record = inv.getMediaByKey(itemNo);
-//
-//        System.out.println("Which attribute would you like to edit?");
-//        System.out.println("(a) Item Number");
-//        System.out.println("(b) Title: ");
-//        System.out.println("(c) Location: ");
-//        System.out.println("(d) Length: ");
-//        String input = in.nextLine();
-//
-//        if (input.equals("a")) {
-//            System.out.println("New Item Number? ");
-//            int newItemNo = Integer.parseInt(in.nextLine());
-//            record.setItemNo(newItemNo);
-//        } else if (input.equals("b")) {
-//            System.out.println("New Title? ");
-//            String title = in.nextLine();
-//            record.setTitle(title);
-//        } else if (input.equals("c")) {
-//            System.out.println("New Location? ");
-//            String location = in.nextLine();
-//            record.setLocation(location);
-//        } else if (input.equals("d")) {
-//            System.out.println("New Length? ");
-//            int length = Integer.parseInt(in.nextLine());
-//            record.setLength(length);
-//        }
-//
-//        System.out.println("Record Edited!");
-//    }
-//
-//    private static void searchRecords(Scanner in, Inventory inv) {
-//        System.out.println(
-//                "Which record would you like to search? (enter an Item Number)");
-//        int itemNo = Integer.parseInt(in.nextLine());
-//        Media record = inv.getMediaByKey(itemNo);
-//        record.printAttributes();
-//
-//        System.out.println("Records Searched!");
-//    }
-
     private static String menu(Scanner in) {
         System.out.println(
                 "(a) Add new records (movies, audiobooks, albums, ..)");
@@ -553,10 +502,6 @@ public final class Main {
         return input;
     }
 
-    /*
-     * Requires Item_No to be defined uniquely in type Media but not an Album,
-     * Track, Movie, or Book
-     */
     private static void generateReports(Scanner in, Connection conn)
             throws SQLException {
         System.out.println();
@@ -792,7 +737,6 @@ public final class Main {
             System.out.println("Successful Entry");
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to AudioBook");
         } finally {
@@ -820,7 +764,6 @@ public final class Main {
             System.out.println("Successful Entry");
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Movie");
         } finally {
@@ -836,7 +779,7 @@ public final class Main {
         PreparedStatement stmt = null;
         try {
             String queryMedia = " INSERT into Media(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?)"; //Pretty sure not supposed to concatenate
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(queryMedia);
 
             stmt.setInt(1, item_No);
@@ -850,7 +793,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Media");
         } finally {
@@ -873,7 +815,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Author");
         }
@@ -892,7 +833,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Director");
         }
@@ -911,7 +851,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Actor");
         }
@@ -930,7 +869,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Artist");
         }
@@ -941,7 +879,7 @@ public final class Main {
         PreparedStatement stmt = null;
         try {
             String queryWrites = " INSERT into Writes(Name, Item_No)"
-                    + " values (?, ?)"; //Pretty sure not supposed to concatenate
+                    + " values (?, ?)";
             stmt = conn.prepareStatement(queryWrites);
 
             stmt.setString(1, author);
@@ -949,7 +887,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Author");
         } finally {
@@ -1379,7 +1316,7 @@ public final class Main {
         return exists;
     }
 
-    //Checks if directorName is already and author in the database
+    //Checks if artistName is already and author in the database
     private static boolean checkArtist(Connection conn, String artistName)
             throws SQLException {
 
@@ -1422,7 +1359,6 @@ public final class Main {
 
             stmt.execute();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("ERROR when adding to Media");
         } finally {
