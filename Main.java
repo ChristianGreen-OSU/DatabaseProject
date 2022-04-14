@@ -19,7 +19,7 @@ public final class Main {
      * Make sure the database file is in the root folder of the project if you
      * only provide the name and extension.
      */
-    private static String DATABASE = "Library.db";
+    private static String DATABASE = "Library (1).db";
 
     /**
      * The query statements to be executed.
