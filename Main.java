@@ -1345,7 +1345,7 @@ public final class Main {
         PreparedStatement stmt = null;
         try {
             String queryMedia = " INSERT into Media(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?)"; //Pretty sure not supposed to concatenate
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(queryMedia);
 
             stmt.setInt(1, item_No);
