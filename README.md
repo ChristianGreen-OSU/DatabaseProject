@@ -34,11 +34,10 @@ command, SQLite studio.
 CREATESQL.txt - creates the database with no data
 DATA.txt - SQL statements to insert data into database
 INSERT_DELETE_Statements.txt - all SQL statements to delete and insert example data
+SampleQueries.txt - Queries from the project
 
 ### Section 3 - Program (software code)
-1. Java Application. The code of the Java application developed must be included, with
-the required corrections. To get points your program must be running, integrated with
-the database and executing the queries required by the user options provided in the
-functionality description.
+Java Databases Final Project.zip - contains all necessary code to run java portion (including .db file). Look inside src folder for the Main.java file
+
 
 
