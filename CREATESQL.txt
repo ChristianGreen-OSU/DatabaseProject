@@ -1,0 +1,53 @@
+CREATE TABLE Actor (Actor_Name VARCHAR (40) PRIMARY KEY, Birth_Date DATE);
+CREATE TABLE Admin (admin_email VARCHAR (50), Username VARCHAR (25), Password VARCHAR (20), F_Name VARCHAR (20), L_Name VARCHAR (20), PRIMARY KEY (admin_email));
+CREATE TABLE Album (Item_No INTEGER PRIMARY KEY, Name VARCHAR (25), Num_Songs INT, Artist_Name VARCHAR (40), Album_Length INTEGER, FOREIGN KEY (Item_No) REFERENCES Media (Item_No), FOREIGN KEY (Artist_Name) REFERENCES Artist (Artist_Name));
+CREATE TABLE Artist (Artist_Name VARCHAR (40) PRIMARY KEY, Active_Status BOOLEAN);
+CREATE TABLE Audiobook (Item_No INTEGER PRIMARY KEY, Title VARCHAR (50), Length INT, Chapters INT, FOREIGN KEY (Item_No) REFERENCES Media (Item_No));
+CREATE TABLE Author (Name VARCHAR (40) PRIMARY KEY, Genre VARCHAR (15));
+CREATE TABLE Band (Artist_Name VARCHAR (40) PRIMARY KEY, Date_Formed DATE, FOREIGN KEY (Artist_Name) REFERENCES Artist (Artist_Name));
+CREATE TABLE Can_edit (admin_email VARCHAR (50), Lib_card_No VARCHAR (9), PRIMARY KEY (admin_email, Lib_card_No), FOREIGN KEY (admin_email) REFERENCES Admin (admin_email), FOREIGN KEY (Lib_card_No) REFERENCES Customer (lib_card_No));
+CREATE TABLE Can_edit_media (admin_email VARCHAR (50), Item_No INTEGER, PRIMARY KEY (admin_email, Item_No), FOREIGN KEY (admin_email) REFERENCES Admin (admin_email), FOREIGN KEY (Item_No) REFERENCES Media (Item_No));
+CREATE TABLE Checks_out (lib_card_No VARCHAR (9, 9), Item_No INT, Checkout_date DATE (8, 8), FOREIGN KEY (lib_card_No) REFERENCES Customer (lib_card_No), FOREIGN KEY (Item_No) REFERENCES Media (Item_No), PRIMARY KEY (lib_card_No, Item_No));
+CREATE TABLE Cust_Payment (lib_card_No CHAR (9, 9) UNIQUE NOT NULL, CC_No VARCHAR (16, 16) NOT NULL, Type STRING (8, 8) NOT NULL, Expir VARCHAR (4, 4) NOT NULL, "", PRIMARY KEY (lib_card_No), FOREIGN KEY (lib_card_No) REFERENCES Customer (lib_card_No));
+CREATE TABLE Customer (lib_card_No CHAR (9) PRIMARY KEY NOT NULL UNIQUE, Email VARCHAR (40, 40) NOT NULL, Address VARCHAR (40, 40), F_Name VARCHAR (25), L_Name VARCHAR (30));
+CREATE TABLE Director (Director_Name VARCHAR (40), Genre VARCHAR (15), PRIMARY KEY (Director_Name));
+CREATE TABLE Directs (Director_Name VARCHAR (40), Actor_Name VARCHAR (40), PRIMARY KEY (Director_Name, Actor_Name), FOREIGN KEY (Director_Name) REFERENCES Director (Director_Name), FOREIGN KEY (Actor_Name) REFERENCES Actor (Actor_Name));
+CREATE TABLE Ensemble (Artist_Name VARCHAR (40) PRIMARY KEY, Year INT (4), Leader VARCHAR (40), FOREIGN KEY (Artist_Name) REFERENCES Artist (Artist_Name));
+CREATE TABLE Media (Item_No INTEGER PRIMARY KEY, Year VARCHAR (4), Genre VARCHAR (15), Location VARCHAR (25), Type VARCHAR (10), Num_Copies INT, Price DECIMAL, Num_times_checked_out INTEGER DEFAULT (0));
+CREATE TABLE Movie (Item_No INTEGER PRIMARY KEY, Title VARCHAR (25), Length INT, Director_Name VARCHAR (40), Actor_Name VARCHAR (40), FOREIGN KEY (Item_No) REFERENCES Media (Item_No), FOREIGN KEY (Director_Name) REFERENCES Director (Director_Name), FOREIGN KEY (Actor_Name) REFERENCES Actor (Actor_Name));
+CREATE TABLE Returns (lib_card_No VARCHAR (9), Item_No INTEGER, Return_date DATE, PRIMARY KEY (lib_card_No, Item_No), FOREIGN KEY (lib_card_No) REFERENCES Customer (lib_card_No), FOREIGN KEY (Item_No) REFERENCES Media (Item_No));
+CREATE TABLE Solo (Artist_Name VARCHAR (40) PRIMARY KEY, Num_Records INT, FOREIGN KEY (Artist_Name) REFERENCES Artist (Artist_Name));
+CREATE TABLE Track (Track_No INTEGER PRIMARY KEY, Title VARCHAR (35), Genre VARCHAR (15), Length INT, Artist_Name VARCHAR (40), Album_Name VARCHAR (30), FOREIGN KEY (Artist_Name, Album_Name) REFERENCES Album (Artist_Name, Name));
+CREATE TABLE Writes (Name VARCHAR (40), Item_No INTEGER, PRIMARY KEY (Name, Item_No), FOREIGN KEY (Name) REFERENCES Author (Name), FOREIGN KEY (Item_No) REFERENCES Audiobook (Item_No));
+
+-- View: Customer_Info
+CREATE VIEW Customer_Info AS SELECT Customer.lib_card_No, Customer.F_Name || ' ' || Customer.L_Name AS "Full Name",
+            Customer.Email, Cust_Payment.CC_No, Cust_Payment.Type, 
+            Cust_Payment.Expir AS "Expiration", 
+            COUNT(Checks_out.Item_No) AS Num_Items_Checked_Out
+FROM Customer, Cust_Payment, Checks_out
+WHERE Customer.lib_card_No = Cust_Payment.lib_card_No
+    AND Customer.lib_card_No = Checks_out.lib_card_No
+GROUP BY Checks_out.lib_card_No
+ORDER BY 7 DESC;
+
+-- View: No_Movies_Checked
+CREATE VIEW No_Movies_Checked AS SELECT Checks_out.lib_card_No,
+          COUNT(Checks_out.Item_No) AS No_Movies_Checked_Out
+     FROM Checks_out,
+          Movie,
+          Customer
+    WHERE Checks_out.Item_No = Movie.Item_No AND
+          Customer.lib_card_No = Checks_out.lib_card_No
+    GROUP BY Customer.lib_card_No;
+
+-- View: Remaining_Copies
+CREATE VIEW Remaining_Copies AS
+SELECT Checks_out.Item_No, Movie.Title,(Media.Num_Copies - COUNT(Checks_out.lib_card_No)) Remaining_Copies
+FROM Movie, Checks_out, Media
+WHERE Movie.Item_No = Checks_out.Item_No
+    AND Media.Item_No = Checks_out.Item_No
+GROUP BY Movie.Title;
+
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;
