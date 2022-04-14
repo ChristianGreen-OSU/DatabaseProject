@@ -1,0 +1,126 @@
+INSERT into ACTOR(Actor_Name, Birth_Date)
+Values(“Tom Hanks”, “07/09/1959”);
+
+INSERT into ADMIN(admin_email, Username, Password, F_Name, L_Name)
+Values(“name@library.org”, “username”, “password”, “John”, “Smith”);
+
+INSERT into ALBUM(Item_No, Name, Num_Songs, Artist_Name, Album_Length)
+Values(101, “Still Bill”, 10, “Bill Withers”, 2174);
+
+INSERT into ARTIST(Artist_Name, Active_Status)
+Values(“Bill Withers”, False);
+
+INSERT into AUDIOBOOK(Item_No, Title, Length, Chapters)
+Values(104, “Winesburg, Ohio”, 200, 12);
+
+INSERT into AUTHOR(Name, Genre)
+Values(“Sherwood Anderson”, “Fiction”);
+
+INSERT into BAND(Artist_Name, Date_Formed)
+Values(“The Chords”, “01/01/1951”);
+
+INSERT into CAN_EDIT(admin_email, lib_card_No)
+Values(“name@library.org”, 101010101);
+
+INSERT into CAN_EDIT_Media(admin_email, Item_No)
+Values(“name@library.org”, 104);
+
+INSERT into CHECKS_OUT(lib_card_No, Item_No, Checkout_Date)
+Values(101010101, 104, “04/10/2022”);
+
+INSERT into CUST_PAYMENT(lib_card_No, CC_No, Type, Expir)
+Values(101010101, “5555444433332222”, “MasterCard”, “11/25”);
+
+INSERT into CUSTOMER(lib_card_No, Email, Address, F_Name, L_Name)
+Values(101010101, “name@organization.org”, “123 W Main Street, Columbus, OH”, “Peter”, “Jones”);
+
+INSERT into DIRECTOR(Director_Name, Genre)
+Values(“Coppola”, “Drama”);
+
+INSERT into DIRECTS(Director_Name, Actor_Name)
+Values(“Coppola”, “Pacino”);
+
+INSERT into ENSEMBLE(Artist_Name, Year, Leader)
+Values(“Group 04 Ensemble”, 2022, “Jim Smith”);
+
+INSERT into MEDIA(Item_No, Year, Genre, Location, Type, Num_Copies, Price, Num_times_checked_out)
+Values(101, 1972, “Soul”, “Chicago”, “Digital”, 5, 3, 0);
+
+INSERT into MOVIE(Item_No, Title, Length, Director_Name, Actor_Name)
+Values(105, “The Godfather”, 150, “Coppola”, “Pacino”);
+
+INSERT into RETURNS(lib_card_No, Item_No, Return_date)
+Values(101010101, 104, 04/11/2022);
+
+INSERT into SOLO(Artist_Name, Num_Records)
+Values(“Bill Withers”, 9);
+
+INSERT into TRACK(Track_No, Title, Genre, Length, Artist_Name, Album_Name)
+Values(5, “Lean On Me”, “Soul”, 258, “Bill Withers”, “Still Bill”);
+
+INSERT into WRITES(Name, Item_No)
+Values(“Sherwood Anderson”, 104);
+
+DELETE FROM ACTOR
+WHERE Actor_Name=‘Lorri Pechold’;
+
+DELETE FROM ADMIN
+WHERE F_name=‘Ava’ AND L_name=‘Poole’;
+
+DELETE FROM ALBUM 
+WHERE Artist_Name=‘Deep Purple’;
+
+DELETE FROM ARTIST 
+WHERE Artist_Name LIKE ‘c%’;
+
+DELETE FROM AUDIOBOOK 
+WHERE Title LIKE ‘Harry Potter%’ AND Length=500;
+
+DELETE FROM AUTHOR 
+WHERE Genre=‘Nuclear’;
+
+DELETE FROM BAND 
+WHERE Date_Formed < 1980;
+
+DELETE FROM CAN_EDIT 
+WHERE admin_email=‘a_hawkins@library.com’;
+
+DELETE CAN_EDIT_Media
+WHERE Item_No > 15;
+
+DELETE FROM CHECKS_OUT 
+WHERE Checkout_date=‘03/02/2022’;
+
+DELETE FROM CUST_PAYMENT 
+WHERE CC_No=‘3%’;
+
+DELETE FROM CUSTOMER 
+WHERE Email=‘wsorensen0@topsy.com’ AND Email=‘svanin3@bloomberg.com’ AND Email=‘dnutteyh@cdc.gov’;
+
+DELETE FROM DIRECTOR 
+WHERE Genre=‘Fiction’;
+
+DELETE FROM DIRECTS 
+WHERE Director_Name LIKE ‘%Abbott’ AND Actor_Name=‘Sidonia Cadamy’;
+
+DELETE FROM ENSEMBLE 
+WHERE Year > 1970;
+
+DELETE FROM MEDIA 
+WHERE Price > 99 AND Type=‘Physical’ AND Item_No < 3;
+
+DELETE FROM MOVIE 
+WHERE Length < 210;
+
+DELETE FROM RETURNS 
+WHERE Item_No < 20;
+
+DELETE FROM SOLO 
+WHERE Num_Records < 4 AND Num_Records > 8;
+
+DELETE FROM TRACK 
+WHERE Artist_Name= ‘AC/DC’ AND Title= ‘C.O.D.’ AND Length < 206;
+
+DELETE FROM WRITES 
+WHERE Item_No = 56;
+
